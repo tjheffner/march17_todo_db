@@ -2,8 +2,10 @@
 <html>
     <head>
         <title>To Do List</title>
+        <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>
     </head>
     <body>
+        <div class="container">
         <h1>To Do List</h1>
         {% if tasks is not empty %}
           <p>Here are all your tasks:</p>
@@ -20,13 +22,13 @@
 
             <label for='duedate'>Due Date (YYYY-MM-DD)</label>
             <input id='duedate' name='duedate' type='text' maxlength=10 required>
-            
+
             <button type='submit'>Add task</button>
         </form>
 
         <form action='/delete_tasks' method='post'>
             <button type='submit'>Delete</button>
         </form>
-
+        </div>
     </body>
 </html>
