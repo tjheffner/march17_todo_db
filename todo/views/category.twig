@@ -9,7 +9,7 @@
             <p>Here are the tasks</p>
             <ul>
                 {% for task in tasks %}
-                    <li>{{ task.getDescription }}</li>
+                    <li>{{ task.getDescription }} {{ category.getId() }}</li>
                 {% endfor %}
             </ul>
         {% endif %}
@@ -22,6 +22,10 @@
         <input id='description' name='description' tyep='text'>
 
         <button type='submit'>Add task</button>
+    </form>
+
+    <form action='/delete_tasks' method='post'>
+        <button type='submit'>Delete</button>
     </form>
 
     <p><a href='/'>Home</a></p>
