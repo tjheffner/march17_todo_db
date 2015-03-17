@@ -5,7 +5,7 @@ class Task
     private $category_id;
     private $id;
 
-//this creates our task with a name (description) and sets the id to null
+//this creates our task with a name (description) and sets the id to a default value of null
     function __construct($description, $id = null, $category_id)
     {
         $this->description = $description;
