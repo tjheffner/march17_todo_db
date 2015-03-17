@@ -54,7 +54,6 @@ class Task
         return $this->duedate;
     }
 
-//this sets the id as an integer
     function setDuedate($new_duedate)
     {
         $this->duedate = (string) $new_duedate;
@@ -86,7 +85,7 @@ class Task
 //this is the "transporter" function
     static function getAll()
     {
-        $returned_tasks = $GLOBALS['DB']->query("SELECT * FROM tasks;");
+        $returned_tasks = $GLOBALS['DB']->query("SELECT * FROM tasks ORDER BY duedate;");
         $tasks = array();
         foreach($returned_tasks as $task) {
             $description = $task['description'];
