@@ -47,7 +47,7 @@
         return $app['twig']->render('task.html.twig', array('task' => $task, 'categories' => $task->getCategories(), 'all_categories' => Category::getAll()));
     });
 
-    $app->post("/categories", function($id) use($app) {
+    $app->post("/categories", function() use($app) {
         $category = new Category($_POST['name']);
         $category->save();
         return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
