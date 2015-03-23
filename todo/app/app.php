@@ -16,55 +16,46 @@
         'twig.path' => __DIR__.'/../views'
     ));
 
-/* 3 pages, view all, view one, edit one
-   view all = categories.twig
-   view one = category.twig
-   edit one = category_edit.twig
+// 3 basic pages-- one main page, one for categories, one for tasks
+    $app->get("/", function() use($app) {
+        return $app['twig']->render('index.html.twig', array('categories' => Category::getAll(), 'tasks' => Task::getAll()));
+    });
+
+    $app->get("/tasks", function() use($app) {
+        return $app['twig']->render('tasks.html.twig', array('tasks' => Task::getAll()));
+    });
+
+    $app->get("/categories", function() use($app) {
+        return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
+    });
+
+/* 2 pages for each class, view all, view one
+   view all: tasks.html.twig
+             categories.html.twig
+   view one: task.html.twig
+             category.html.twig
 */
+    $app->post("/tasks", function() use ($app) {
+        $description = $_POST['description'];
+        $task = new Task($description);
+        $task->save();
+        return $app['twig']->render('tasks.html.twig', array('tasks' => Task::getAll()));
+    });
 
-//show all categories
-    $app->get("/", function() use ($app) {
+    $app->get("/task/{id}", function($id) use ($app) {
+        $task = Task::find($id);
+        return $app['twig']->render('task.html.twig', array('task' => $task, 'categories' => $task->getCategories(), 'all_categories' => Category::getAll()));
+    });
+
+    $app->post("/categories", function($id) use($app) {
+        $category = new Category($_POST['name']);
+        $category->save();
         return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
     });
 
-//create a new category
-    $app->post("/categories", function() use($app) {
-        $new_category = new Category($_POST['name']);
-        $new_category->save();
-        return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
-    });
-
-//view a single category + their tasks
     $app->get("/categories/{id}", function($id) use($app) {
-        $current_category = Category::find($id);
-        return $app['twig']->render('category.html.twig', array('category' => $current_category, 'tasks' => $current_category->getTasks()));
-    });
-
-//edit a single category
-    $app->get("/categories/{id}/edit", function($id) use($app) {
-        $current_category = Category::find($id);
-        return $app['twig']->render('category_edit.html.twig', array('category' => $current_category));
-    });
-
-//edit form sent as a patch
-    $app->patch("/categories/{id}", function($id) use($app) {
-        $current_category = Category::find($id);
-        $new_name = $_POST['name'];
-        $current_category->update($new_name);
-        return $app['twig']->render('category.html.twig', array('category' => $current_category, 'tasks' => $current_category->getTasks()));
-    });
-
-//delete a single category
-    $app->delete("/categories/{id}/delete", function($id) use($app) {
-        $current_category = Category::find($id);
-        $current_category->delete();
-        return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
-    });
-
-//delete all categories
-    $app->post("/delete_categories", function() use($app) {
-        Category::deleteAll();
-        return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
+        $category = Category::find($id);
+        return $app['twig']->render('category.html.twig', array('category' => $category, 'tasks' => $category->getTasks(), 'all_tasks' => Task::getAll()));
     });
 
     return $app;

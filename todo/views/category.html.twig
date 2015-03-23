@@ -10,7 +10,7 @@
 
         {% if tasks is not empty %}
             <ol>
-            {% for tasks in category %}
+            {% for task in tasks %}
                 <p>{{ task.getDescription }}</p>
             {% endfor %}
             </ol>
