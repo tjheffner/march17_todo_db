@@ -6,13 +6,13 @@
     <body>
         <div class="container">
         <h1>Welcome to To Do List</h1>
-        <h3>{{ task.getName }}:</h3>
+        <h3>{{ task.getDescription }}:</h3>
 
         {% if categories is not empty %}
             <h5>Here are the categories for this task.</h5>
             <ol>
             {% for category in categories %}
-                <p>{{ category.getDescription }}</p>
+                <p>{{ category.getName }}</p>
             {% endfor %}
             </ol>
             {% else %}
