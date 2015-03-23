@@ -2,17 +2,13 @@
 class Task
 {
     private $description;
-    private $category_id;
     private $id;
-    private $duedate;
 
 //this creates our task with a name (description) and sets the id to a default value of null
-    function __construct($description, $id = null, $category_id, $duedate)
+    function __construct($description, $id = null)
     {
         $this->description = $description;
         $this->id = $id;
-        $this->category_id = $category_id;
-        $this->duedate = $duedate;
     }
 
 //this sets the description as a string
@@ -39,26 +35,6 @@ class Task
         $this->id = (int) $new_id;
     }
 
-    function setCategoryId($new_category_id)
-    {
-        $this->category_id = (int) $new_category_id;
-    }
-
-    function getCategoryId()
-    {
-        return $this->category_id;
-    }
-
-    function getDuedate()
-    {
-        return $this->duedate;
-    }
-
-    function setDuedate($new_duedate)
-    {
-        $this->duedate = (string) $new_duedate;
-    }
-
 //this finds the id of tasks after they have been "transported" from the database into our code
     static function find($search_id)
     {
@@ -76,7 +52,7 @@ class Task
 //this saves the entries in our form into the database
     function save()
     {
-        $statement = $GLOBALS['DB']->query("INSERT INTO tasks (description, category_id, duedate) VALUES ('{$this->getDescription()}', {$this->getCategoryId()}, '{$this->getDuedate()}') RETURNING id;");
+        $statement = $GLOBALS['DB']->query("INSERT INTO tasks (description) VALUES ('{$this->getDescription()}') RETURNING id;");
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         $this->setId($result['id']);
     }
@@ -90,9 +66,7 @@ class Task
         foreach($returned_tasks as $task) {
             $description = $task['description'];
             $id = $task['id'];
-            $category_id = $task['category_id'];
-            $duedate = $task['duedate'];
-            $new_task = new Task($description, $id, $category_id, $duedate);
+            $new_task = new Task($description, $id);
             array_push($tasks, $new_task);
         }
         return $tasks;
@@ -102,6 +76,17 @@ class Task
     static function deleteAll()
     {
         $GLOBALS['DB']->exec("DELETE FROM tasks *;");
+    }
+
+    function update($new_description)
+    {
+        $GLOBALS['DB']->exec("UPDATE tasks SET description = '{$new_description}' WHERE id = {$this->getId()};");
+        $this->setDescription($new_description);
+    }
+
+    function delete()
+    {
+        $GLOBALS['DB']->exec("DELETE FROM tasks WHERE id = {$this->getId()};");
     }
 
 }

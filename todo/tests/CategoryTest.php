@@ -16,33 +16,8 @@ class CategoryTest extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         Category::deleteAll();
+        Task::deleteAll();
     }
-
-    function testGetTasks()
-    {
-        //Arrange
-        $name = "Work stuff";
-        $id = null;
-        $test_category = new Category($name, $id);
-        $test_category->save();
-
-        $test_category_id = $test_category->getId();
-
-        $description = "Email client";
-        $test_task = new Task($description, $id, $test_category_id);
-        $test_task->save();
-
-        $description2 = "Meet with boss";
-        $test_task2 = new Task($description2, $id, $test_category_id);
-        $test_task2->save();
-
-        //Act
-        $result = $test_category->getTasks();
-
-        //Assert
-        $this->assertEquals([$test_task, $test_task2], $result);
-    }
-
 
     function test_getName()
     {
@@ -101,6 +76,43 @@ class CategoryTest extends PHPUnit_Framework_TestCase
 
         //Assert
         $this->assertEquals($test_Category, $result[0]);
+    }
+
+    function test_update()
+    {
+        //Arrange
+        $name = "Work stuff";
+        $id = 1;
+        $test_category = new Category($name, $id);
+        $test_category->save();
+
+        $new_name = "Home stuff";
+
+        //Act
+        $test_category->update($new_name);
+
+        //Assert
+        $this->assertEquals("Home stuff", $test_category->getName());
+    }
+
+    function test_deleteCategory()
+    {
+        //Arrange
+        $name = "Work stuff";
+        $id = 1;
+        $test_category = new Category($name, $id);
+        $test_category->save();
+
+        $name2 = "Home stuff";
+        $id2 = 2;
+        $test_category2 = new Category($name2, $id2);
+        $test_category2->save();
+
+        //Act
+        $test_category->delete();
+
+        //Assert
+        $this->assertEquals([$test_category2], Category::getAll());
     }
 
     function test_getAll()
