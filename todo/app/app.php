@@ -5,54 +5,66 @@
 
     $app = new Silex\Application();
 
+    $app['debug']=true;
+
+    use Symfony\Component\HttpFoundation\Request;
+      Request::enableHttpMethodParameterOverride();
+
     $DB = new PDO('pgsql:host=localhost;dbname=to_do');
 
     $app->register(new Silex\Provider\TwigServiceProvider(), array(
         'twig.path' => __DIR__.'/../views'
     ));
 
+/* 3 pages, view all, view one, edit one
+   view all = categories.twig
+   view one = category.twig
+   edit one = category_edit.twig
+*/
 
+//show all categories
     $app->get("/", function() use ($app) {
-        return $app['twig']->render('index.twig', array('categories' => Category::getAll()));
+        return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
     });
 
-    $app->get("/categories/{id}", function($id) use ($app) {
-        $category = Category::find($id);
-        return $app['twig']->render('category.twig', array('category' => $category, 'tasks' => $category->getTasks()));
+//create a new category
+    $app->post("/categories", function() use($app) {
+        $new_category = new Category($_POST['name']);
+        $new_category->save();
+        return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
     });
 
-    $app->get("/tasks", function() use ($app) {
-        return $app['twig']->render('tasks.twig', array('tasks' => Task::getAll()));
+//view a single category + their tasks
+    $app->get("/categories/{id}", function($id) use($app) {
+        $current_category = Category::find($id);
+        return $app['twig']->render('category.html.twig', array('category' => $current_category, 'tasks' => $current_category->getTasks()));
     });
 
-    // $app->get("/categories", function() use ($app) {
-    //     return $app['twig']->render('categories.twig', array('categories' => Category::getAll()));
-    // });
-
-    $app->post("/tasks", function() use ($app) {
-        $description = $_POST['description'];
-        $category_id = $_POST['category_id'];
-        $duedate = $_POST['duedate'];
-        $task = new Task($description, $id = null, $category_id, $duedate);
-        $task->save();
-        $category = Category::find($category_id);
-        return $app['twig']->render('category.twig', array('category' => $category, 'tasks' => $category->getTasks(), 'duedate' => $duedate));
+//edit a single category
+    $app->get("/categories/{id}/edit", function($id) use($app) {
+        $current_category = Category::find($id);
+        return $app['twig']->render('category_edit.html.twig', array('category' => $current_category));
     });
 
-    $app->post("/delete_tasks", function() use ($app) {
-        Task::deleteAll();
-        return $app['twig']->render('index.twig', array('categories' => Category::getAll()));
+//edit form sent as a patch
+    $app->patch("/categories/{id}", function($id) use($app) {
+        $current_category = Category::find($id);
+        $new_name = $_POST['name'];
+        $current_category->update($new_name);
+        return $app['twig']->render('category.html.twig', array('category' => $current_category, 'tasks' => $current_category->getTasks()));
     });
 
-    $app->post("/categories", function() use ($app) {
-        $category = new Category($_POST['name']);
-        $category->save();
-        return $app['twig']->render('index.twig', array('categories' => Category::getAll()));
+//delete a single category
+    $app->delete("/categories/{id}/delete", function($id) use($app) {
+        $current_category = Category::find($id);
+        $current_category->delete();
+        return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
     });
 
-    $app->post("/delete_categories", function() use ($app) {
+//delete all categories
+    $app->post("/delete_categories", function() use($app) {
         Category::deleteAll();
-        return $app['twig']->render('index.twig');
+        return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
     });
 
     return $app;

@@ -225,7 +225,7 @@ class CategoryTest extends PHPUnit_Framework_TestCase
         $name = "Work stuff";
         $id = 1;
         $test_category = new Category($name, $id);
-        $test_category->save();
+        $test_catego ry->save();
 
         $description = "File reports";
         $id2 = 2;

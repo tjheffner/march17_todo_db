@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <title>To Do List</title>
+        <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>
+    </head>
+    <body>
+        <div class="container">
+        <h1>To Do List</h1>
+        <h3>Update '{{ category.getName }}'</h3>
+            <form action="/categories/{{ category.getId }}" method="post">
+                <input name="_method" type="hidden" value="patch">
+                <label for="name">Rename category:</label>
+                <input id="name" name="name" type="text">
+                <button type="submit">Update</button>
+            </form>
+
+            <form action="/categories/{{ category.getId }}/delete" method="post">
+                <input name="_method" type="hidden" value="delete">
+                <button type="submit">Remove category</button>
+            </form>
+
+        </div>
+
+    </body>
+</html>
