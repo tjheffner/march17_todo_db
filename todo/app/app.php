@@ -76,6 +76,56 @@
         return $app['twig']->render('task.html.twig', array('task' => $task, 'tasks' => Task::getAll(), 'categories' => $task->getCategories(), 'all_categories' => Category::getAll()));
     });
 
+    //two delete pages per class, singular and class-wide delete functions.
+
+    $app->post("/delete_categories", function() use ($app) {
+        Category::deleteAll();
+        return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
+    });
+
+    $app->post("/delete_tasks", function() use ($app) {
+        Task::deleteAll();
+        return $app['twig']->render('tasks.html.twig', array('tasks' => Task::getAll()));
+    });
+
+    $app->delete("/categories/{id}/delete", function($id) use ($app) {
+        $current_category = Category::find($id);
+        $current_category->delete();
+        return $app['twig']->render('categories.html.twig', array('categories' => Category::getAll()));
+    });
+
+    $app->delete("/tasks/{id}/delete", function($id) use ($app) {
+        $current_task = Task::find($id);
+        $current_task->delete();
+        return $app['twig']->render('tasks.html.twig', array('tasks' => Task::getAll()));
+    });
+
+    //2 edit routes per class, one to and one from the edit page.
+
+    $app->get("/categories/{id}/edit", function($id) use ($app) {
+        $current_category = Category::find($id);
+        return $app['twig']->render('category_edit.html.twig', array('category' => $current_category));
+    });
+
+    $app->patch("/categories/{id}", function($id) use ($app) {
+        $current_category = Category::find($id);
+        $new_name = $_POST['new_name'];
+        $current_category->update($new_name);
+        return $app['twig']->render('category.html.twig', array('category' => $current_category, 'tasks' => $current_category->getTasks(), 'all_tasks' => Task::getAll()));
+    });
+
+    $app->get("/tasks/{id}/edit", function($id) use ($app) {
+        $current_task = Task::find($id);
+        return $app['twig']->render('task_edit.html.twig', array('task' => $current_task));
+    });
+
+    $app->patch("/tasks/{id}", function($id) use ($app) {
+        $current_task = Task::find($id);
+        $new_description = $_POST['new_description'];
+        $current_task->update($new_description);
+        return $app['twig']->render('task.html.twig', array('task' => $current_task, 'categories' => $current_task->getCategories(), 'all_categories' => Category::getAll()));
+        });
+
     return $app;
 
 ?>

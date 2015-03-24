@@ -1,14 +1,14 @@
 ## Developers
-Reid Baldwin & Tanner Heffner
+Tanner Heffner && John Franti
 
 # App
-This to-do app is a continuation of the march16_todo repository with added database support.
-We must have messed up git pull somewhere because we couldn't push back to that repo.
-So this repo was created instead.
+This to-do app is a continuation of the march17_todo repository with added database support.
+It keeps a list of tasks and categories which can be linked together for fun and profit.
 
 # PSQL stuff
 CREATE DATABASE to_do;
 \c to_do
-CREATE TABLE tasks (id serial PRIMARY KEY, description varchar, category_id int);
+CREATE TABLE tasks (id serial PRIMARY KEY, description varchar);
 CREATE TABLE categories (id serial PRIMARY KEY, name varchar);
-ALTER TABLE tasks ADD duedate date;
+CREATE TABLE categories_tasks (id serial PRIMARY KEY, category_id int, task_id int);
+CREATE DATABASE to_do_test WITH TEMPLATE to_do;
