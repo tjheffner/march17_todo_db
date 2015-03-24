@@ -37,7 +37,8 @@
 */
     $app->post("/tasks", function() use ($app) {
         $description = $_POST['description'];
-        $duedate = $_POST['duedate'];
+        // $duedate = ($_POST['year']."-".$_POST['month']."-".$_POST['day']);
+        $duedate = ($_POST['duedate']);
         $task = new Task($description, $id = null, $status = 0, $duedate);
         $task->save();
         return $app['twig']->render('tasks.html.twig', array('tasks' => Task::getAll()));
