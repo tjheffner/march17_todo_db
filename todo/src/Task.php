@@ -4,13 +4,15 @@ class Task
     private $description;
     private $id;
     private $status;
+    private $duedate;
 
 //this creates our task with a name (description) and sets the id to a default value of null
-    function __construct($description, $id = null, $status = 0)
+    function __construct($description, $id = null, $status = 0, $duedate)
     {
         $this->description = $description;
         $this->id = $id;
         $this->status = $status;
+        $this->duedate = $duedate;
     }
 
 //this sets the description as a string
@@ -47,6 +49,16 @@ class Task
         return $this->status;
     }
 
+    function setDuedate($new_duedate)
+    {
+        $this->duedate = (string) $new_duedate;
+    }
+
+    function getDuedate()
+    {
+        return $this->duedate;
+    }
+
 //this finds the id of tasks after they have been "transported" from the database into our code
     static function find($search_id)
     {
@@ -64,7 +76,7 @@ class Task
 //this saves the entries in our form into the database
     function save()
     {
-        $statement = $GLOBALS['DB']->query("INSERT INTO tasks (description, status) VALUES ('{$this->getDescription()}', {$this->getStatus()}) RETURNING id;");
+        $statement = $GLOBALS['DB']->query("INSERT INTO tasks (description, status, duedate) VALUES ('{$this->getDescription()}', {$this->getStatus()}, '{$this->getDuedate()}') RETURNING id;");
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         $this->setId($result['id']);
     }
@@ -79,7 +91,8 @@ class Task
             $description = $task['description'];
             $status = $task['status'];
             $id = $task['id'];
-            $new_task = new Task($description, $id, $status);
+            $duedate = $task['duedate'];
+            $new_task = new Task($description, $id, $status, $duedate);
             array_push($tasks, $new_task);
         }
         return $tasks;
@@ -101,6 +114,12 @@ class Task
     {
         $GLOBALS['DB']->exec("UPDATE tasks SET status = {$new_status} WHERE id = {$this->getId()};");
         $this->setStatus($new_status);
+    }
+
+    function updateDuedate($new_duedate)
+    {
+        $GLOBALS['DB']->exec("UPDATE tasks SET duedate = '{$new_duedate}' WHERE id = {$this->getId()};");
+        $this->setDuedate($new_duedate);
     }
 
     function delete()

@@ -8,17 +8,25 @@
         <h1>Welcome to the Task List</h1>
 
         <form action="/tasks" method="post">
-            <label for="description">Task name:</label>
-            <input id="description" name="description" type="text">
-
+            <label for="description">Task name:   </label>
+            <input id="description" name="description" type="text"><br>
+            <label for="duedate">Task due by:</label>
+            <input id="duedate" name="duedate" type="text"><br>
             <button type="submit">Add Task</button>
         </form>
 
         {% if tasks is not empty %}
-            <p>Here are all your tasks</p>
+            <p>Here are all your tasks:</p>
             <ul>
                 {% for task in tasks %}
-                    <li><a href="/tasks/{{ task.getId }}">{{ task.getDescription }}</a>{% if task.getStatus == 0 %}<p> - Active</p>{% else %}<p> - Completed</p>{% endif %}</li>
+                    <li><a href="/tasks/{{ task.getId }}">{{ task.getDescription }}</a>
+                        <p> Due: {{ task.getDuedate }}
+                    {% if task.getStatus == 0 %}
+                         [Active]
+                    {% else %}
+                         [Completed]
+                    {% endif %}</p>
+                    </li>
                 {% endfor %}
             </ul>
 

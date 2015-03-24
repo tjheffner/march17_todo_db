@@ -37,7 +37,8 @@
 */
     $app->post("/tasks", function() use ($app) {
         $description = $_POST['description'];
-        $task = new Task($description);
+        $duedate = $_POST['duedate'];
+        $task = new Task($description, $id = null, $status = 0, $duedate);
         $task->save();
         return $app['twig']->render('tasks.html.twig', array('tasks' => Task::getAll()));
     });
@@ -131,6 +132,14 @@
         $current_task = Task::find($id);
         $new_status = $_POST['new_status'];
         $current_task->updateStatus($new_status);
+        return $app['twig']->render('tasks.html.twig', array('task' => $current_task, 'tasks' => Task::getAll()));
+    });
+
+    //edit route to update task duedate
+    $app->patch("/tasks/{id}/newdate", function($id) use($app) {
+        $current_task = Task::find($id);
+        $new_duedate = $_POST['new_duedate'];
+        $current_task->updateDuedate($new_duedate);
         return $app['twig']->render('tasks.html.twig', array('task' => $current_task, 'tasks' => Task::getAll()));
     });
 
