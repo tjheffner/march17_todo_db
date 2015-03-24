@@ -16,21 +16,26 @@
             {% endfor %}
             </ol>
             {% else %}
-            <p>You have free time!</p>
-            <p>Why not add a category?</p>
+
+            <h4>Add a Category to this Task.</h4>
+
+            <form action="/add_categories" method="post">
+                <label for="category_id">Select a category</label>
+                <input value="{{ task.getId }}" id="task_id" name="task_id" type="hidden">
+                <select id="category_id" name="category_id" type="text">
+                    {% for category in all_categories %}
+                        <option value="{{ category.getId }}"> {{ category.getName }} </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Add Category</button>
+            </form>
+
         {% endif %}
 
-        <h4>Add a Category to this Task.</h4>
-
-        <form action="/add_categories" method="post">
-            <label for="category_id">Select a category</label>
-            <input value="{{ task.getId }}" id="task_id" name="task_id" type="hidden">
-            <select id="category_id" name="category_id" type="text">
-                {% for category in all_categories %}
-                    <option value="{{ category.getId }}"> {{ category.getName }} </option>
-                {% endfor %}
-            </select>
-            <button type="submit">Add Category</button>
+        <form action="/tasks/{{ task.getId}}/complete" method="post">
+            <input name="_method" type="hidden" value="patch">
+            <input value=1 id="new_status" name="new_status" type="hidden">
+            <button type="submit">Complete task</button>
         </form>
 
         <form action="/tasks/{{ task.getId }}/edit">

@@ -7,8 +7,6 @@
         <div class="container">
         <h1>Welcome to the Task List</h1>
 
-        <p>Create a new task</p>
-
         <form action="/tasks" method="post">
             <label for="description">Task name:</label>
             <input id="description" name="description" type="text">
@@ -20,7 +18,7 @@
             <p>Here are all your tasks</p>
             <ul>
                 {% for task in tasks %}
-                    <li><a href="/tasks/{{ task.getId }}">{{ task.getDescription }}</a></li>
+                    <li><a href="/tasks/{{ task.getId }}">{{ task.getDescription }}</a>{% if task.getStatus == 0 %}<p> - Active</p>{% else %}<p> - Completed</p>{% endif %}</li>
                 {% endfor %}
             </ul>
 

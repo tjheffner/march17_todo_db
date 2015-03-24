@@ -126,6 +126,14 @@
         return $app['twig']->render('task.html.twig', array('task' => $current_task, 'categories' => $current_task->getCategories(), 'all_categories' => Category::getAll()));
         });
 
+    //edit route to update task status
+    $app->patch("/tasks/{id}/complete", function($id) use($app) {
+        $current_task = Task::find($id);
+        $new_status = $_POST['new_status'];
+        $current_task->updateStatus($new_status);
+        return $app['twig']->render('tasks.html.twig', array('task' => $current_task, 'tasks' => Task::getAll()));
+    });
+
     return $app;
 
 ?>

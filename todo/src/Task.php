@@ -3,12 +3,14 @@ class Task
 {
     private $description;
     private $id;
+    private $status;
 
 //this creates our task with a name (description) and sets the id to a default value of null
-    function __construct($description, $id = null)
+    function __construct($description, $id = null, $status = 0)
     {
         $this->description = $description;
         $this->id = $id;
+        $this->status = $status;
     }
 
 //this sets the description as a string
@@ -35,6 +37,16 @@ class Task
         $this->id = (int) $new_id;
     }
 
+    function setStatus($new_status)
+    {
+        $this->status = (int) $new_status;
+    }
+
+    function getStatus()
+    {
+        return $this->status;
+    }
+
 //this finds the id of tasks after they have been "transported" from the database into our code
     static function find($search_id)
     {
@@ -52,7 +64,7 @@ class Task
 //this saves the entries in our form into the database
     function save()
     {
-        $statement = $GLOBALS['DB']->query("INSERT INTO tasks (description) VALUES ('{$this->getDescription()}') RETURNING id;");
+        $statement = $GLOBALS['DB']->query("INSERT INTO tasks (description, status) VALUES ('{$this->getDescription()}', {$this->getStatus()}) RETURNING id;");
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         $this->setId($result['id']);
     }
@@ -65,8 +77,9 @@ class Task
         $tasks = array();
         foreach($returned_tasks as $task) {
             $description = $task['description'];
+            $status = $task['status'];
             $id = $task['id'];
-            $new_task = new Task($description, $id);
+            $new_task = new Task($description, $id, $status);
             array_push($tasks, $new_task);
         }
         return $tasks;
@@ -82,6 +95,12 @@ class Task
     {
         $GLOBALS['DB']->exec("UPDATE tasks SET description = '{$new_description}' WHERE id = {$this->getId()};");
         $this->setDescription($new_description);
+    }
+
+    function updateStatus($new_status)
+    {
+        $GLOBALS['DB']->exec("UPDATE tasks SET status = {$new_status} WHERE id = {$this->getId()};");
+        $this->setStatus($new_status);
     }
 
     function delete()
